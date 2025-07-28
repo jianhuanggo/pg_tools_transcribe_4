@@ -45,7 +45,21 @@ class AskAIRequest(BaseModel):
 class AskAIResponse(BaseModel):
     answer: str = Field(..., description="AI's answer to the question.")
 
+
+from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
+from fastapi.responses import JSONResponse
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
@@ -54,6 +68,20 @@ if not OPENAI_API_KEY:
 
 # Initialize with a default model
 llm_processor = get_llm_processor("gpt-4o")  # Default processor
+
+@app.get("/health")
+async def health_check():
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "healthy", 
+            "message": "Brainwave API is running successfully"
+        }
+    )
+
+@app.get("/favicon.ico", status_code=204)
+async def favicon():
+    return None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
