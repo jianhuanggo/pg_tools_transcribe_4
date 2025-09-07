@@ -61,23 +61,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def get_realtime_page(request: Request):
     return FileResponse("static/realtime.html")
 
-@app.get("/health", status_code=200)
-async def health_check():
-    """
-    Health check endpoint that returns the server status.
-    
-    Returns:
-        Response: HTTP 200 success response with status information
-    """
-    return Response(
-        content=json.dumps({
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "service": "pg_tools_transcribe_4_realtime_server"
-        }),
-        media_type="application/json",
-        status_code=200
-    )
+@app.route('/health')
+def health():
+    return {'status': 'healthy'}, 200
 
 class AudioProcessor:
     def __init__(self, target_sample_rate=24000):
