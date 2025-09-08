@@ -463,4 +463,5 @@ async def check_correctness(request: CorrectnessRequest):
         raise HTTPException(status_code=500, detail="Error processing correctness check.")
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=3005)
+    port = int(os.environ.get('PORT', 5335))
+    uvicorn.run(app, host="0.0.0.0", port=port)
